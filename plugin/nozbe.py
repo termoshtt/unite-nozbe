@@ -13,3 +13,15 @@ def _call_api(api_key, method, attr):
         url += "/%s-%s" % (key, val)
     res = urllib2.urlopen(url)
     return json.load(res)
+
+
+def projects(api_key):
+    return _call_api(api_key, "projects", {})
+
+
+def contexts(api_key):
+    return _call_api(api_key, "contexts", {})
+
+
+def next_actions(api_key):
+    return _call_api(api_key, "actions", {"what": "next"})
