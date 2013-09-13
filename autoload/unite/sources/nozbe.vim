@@ -5,7 +5,7 @@
 
 " Main source
 let s:nozbe_src = {'name': 'nozbe'}
-function! s:nozbe_src.gather_candidates(args,context)"{{{
+function! s:nozbe_src.gather_candidates(args,context)
     return map([
         \ ['Next Action', 'next_action'],
         \ ['Project', 'project'],
@@ -16,17 +16,17 @@ function! s:nozbe_src.gather_candidates(args,context)"{{{
         \ "kind"  : "source",
         \ "action__source_name" : "nozbe/" . v:val[1],
         \ }')
-endfunction"}}}
+endfunction
 
 " Next Action
 let s:nozbe_next_action_src = {'name': 'nozbe/next_action'}
-function! s:nozbe_next_action_src.gather_candidates(args,context)"{{{
-    return [{
-        \ 'word': 'src1',
-        \ 'source': 'nozbe/next_action',
-        \ 'kind': 'word'
-        \ }]
-endfunction"}}}
+function! s:nozbe_next_action_src.gather_candidates(args,context)
+    return map(call(function("nozbe#next_actions"),[g:unite_nozbe_api_key,]),'{
+        \ "word": v:val["name"],
+        \ "source": s:nozbe_next_action_src.name,
+        \ "kind": "word",
+        \ }')
+endfunction
 
 " Project
 let s:nozbe_project_src = {'name': 'nozbe/project'}
@@ -35,20 +35,20 @@ function! s:nozbe_project_src.gather_candidates(args,context)
     let l:projects = call(l:Projects_f, [g:unite_nozbe_api_key,])
     return map(l:projects,'{
         \ "word": v:val["name"],
-        \ "source": "nozbe/projects",
+        \ "source": s:nozbe_project_src.name,
         \ "kind": "word",
         \ }')
 endfunction
 
 " Context
 let s:nozbe_context_src = {'name': 'nozbe/context'}
-function! s:nozbe_context_src.gather_candidates(args,context)"{{{
+function! s:nozbe_context_src.gather_candidates(args,context)
     return [{
         \ 'word': 'src1',
         \ 'source': 'nozbe/next_action',
         \ 'kind': 'word'
         \ }]
-endfunction"}}}
+endfunction
 
 
 function! unite#sources#nozbe#define()
