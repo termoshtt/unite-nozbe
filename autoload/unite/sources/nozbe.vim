@@ -4,9 +4,9 @@
 " License: MIT Licence
 
 
+" Main source
 let s:nozbe_src = {'name': 'nozbe'}
-
-function! s:nozbe_src.gather_candidates(args,context)
+function! s:nozbe_src.gather_candidates(args,context)"{{{
     return map([
         \ ['Next Action', 'next_action'],
         \ ['Project', 'project'],
@@ -17,22 +17,43 @@ function! s:nozbe_src.gather_candidates(args,context)
         \ "kind"  : "source",
         \ "action__source_name" : "nozbe/" . v:val[1],
         \ }')
-endfunction
+endfunction"}}}
 
-
+" Next Action
 let s:nozbe_next_action_src = {'name': 'nozbe/next_action'}
-
-function! s:nozbe_next_action_src.gather_candidates(args,context)
+function! s:nozbe_next_action_src.gather_candidates(args,context)"{{{
     return [{
         \ 'word': 'src1',
         \ 'source': 'nozbe/next_action',
         \ 'kind': 'word'
         \ }]
-endfunction
+endfunction"}}}
+
+" Project
+let s:nozbe_project_src = {'name': 'nozbe/project'}
+function! s:nozbe_project_src.gather_candidates(args,context)"{{{
+    return [{
+        \ 'word': 'src1',
+        \ 'source': 'nozbe/next_action',
+        \ 'kind': 'word'
+        \ }]
+endfunction"}}}
+
+" Context
+let s:nozbe_context_src = {'name': 'nozbe/context'}
+function! s:nozbe_context_src.gather_candidates(args,context)"{{{
+    return [{
+        \ 'word': 'src1',
+        \ 'source': 'nozbe/next_action',
+        \ 'kind': 'word'
+        \ }]
+endfunction"}}}
 
 
 function! unite#sources#nozbe#define()
     call unite#define_source(s:nozbe_next_action_src)
+    call unite#define_source(s:nozbe_project_src)
+    call unite#define_source(s:nozbe_context_src)
     return s:nozbe_src
 endfunction
 
