@@ -3,7 +3,6 @@
 " Version: 0.1.0
 " License: MIT Licence
 
-
 " Main source
 let s:nozbe_src = {'name': 'nozbe'}
 function! s:nozbe_src.gather_candidates(args,context)"{{{
@@ -31,13 +30,15 @@ endfunction"}}}
 
 " Project
 let s:nozbe_project_src = {'name': 'nozbe/project'}
-function! s:nozbe_project_src.gather_candidates(args,context)"{{{
-    return [{
-        \ 'word': 'src1',
-        \ 'source': 'nozbe/next_action',
-        \ 'kind': 'word'
-        \ }]
-endfunction"}}}
+function! s:nozbe_project_src.gather_candidates(args,context)
+    let l:Projects_f = function("nozbe#get_projects")
+    let l:projects = call(l:Projects_f, [g:unite_nozbe_api_key,])
+    return map(l:projects,'{
+        \ "word": v:val["name"],
+        \ "source": "nozbe/projects",
+        \ "kind": "word",
+        \ }')
+endfunction
 
 " Context
 let s:nozbe_context_src = {'name': 'nozbe/context'}

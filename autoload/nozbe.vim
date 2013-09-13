@@ -17,17 +17,15 @@ def call_api(api_key, method, attr):
     try:
         return json.load(res)
     except:
-        return None
+        return []
 EOF
 
 function! nozbe#get_projects(api_key)
-    " let l:projects = [ {'name':'project_zero','id':'dfak'} ]
     let l:projects = []
 python << EOF
 import vim
 key = vim.eval("a:api_key")
 projects = call_api(key,"projects",{})
-print(projects)
 for pro in projects:
     name  = pro[u"name"]
     id_   = pro[u"id"]
