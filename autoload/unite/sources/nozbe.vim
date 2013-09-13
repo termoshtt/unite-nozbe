@@ -20,13 +20,13 @@ endfunction"}}}
 
 " Next Action
 let s:nozbe_next_action_src = {'name': 'nozbe/next_action'}
-function! s:nozbe_next_action_src.gather_candidates(args,context)"{{{
-    return [{
-        \ 'word': 'src1',
-        \ 'source': 'nozbe/next_action',
-        \ 'kind': 'word'
-        \ }]
-endfunction"}}}
+function! s:nozbe_next_action_src.gather_candidates(args,context)
+    return map(call(function("nozbe#next_actions"),[g:unite_nozbe_api_key,]),'{
+        \ "word": v:val["name"],
+        \ "source": s:nozbe_next_action_src.name,
+        \ "kind": "word",
+        \ }')
+endfunction
 
 " Project
 let s:nozbe_project_src = {'name': 'nozbe/project'}
