@@ -3,11 +3,13 @@
 " Version: 0.1.0
 " License: MIT Licence
 
+
 python << EOF
 import urllib2
 import json
 
-def call_api(api_key, method, attr):
+
+def call_api(api_key, method, attr={}):
     base_url = "https://webapp.nozbe.com/api/"
     url = base_url + method
     url += "/key-" + api_key
@@ -25,7 +27,7 @@ function! nozbe#get_projects(api_key)
 python << EOF
 import vim
 key = vim.eval("a:api_key")
-projects = call_api(key,"projects",{})
+projects = call_api(key,"projects")
 for pro in projects:
     name  = pro[u"name"]
     id_   = pro[u"id"]
