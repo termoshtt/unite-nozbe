@@ -31,6 +31,15 @@ cmd_tmpl_actions = u"""\
      'context_name':'%(context_name)s',\
      'context_id':'%(context_id)s',\
     })"""
+
+cmd_tmpl_project = u"""\
+    call add(%(vim_val)s,\
+    {'name':'%(name)s',\
+     'id':'%(id)s',\
+     'count':'%(count)s',\
+    })"""
+
+cmd_tmpl_context = cmd_tmpl_project
 EOF
 
 
@@ -56,11 +65,8 @@ import vim
 key = vim.eval("a:api_key")
 projects = call_api(key,"projects")
 for pro in projects:
-    name  = pro[u"name"]
-    id_   = pro[u"id"]
-    count = pro[u"count"]
-    cmd_tmpl = u"call add(l:projects,{'name':'%s','id':'%s','count':'%s'})"
-    cmd = (cmd_tmpl % (name,id_,count)).encode("utf-8")
+    pro.update({"vim_val":"l:projects"})
+    cmd = (cmd_tmpl_project % pro).encode("utf-8")
     vim.command(cmd)
 EOF
     return l:projects
