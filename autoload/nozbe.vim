@@ -80,11 +80,8 @@ import vim
 key = vim.eval("a:api_key")
 contexts = call_api(key,"contexts")
 for con in contexts:
-    name  = con[u"name"]
-    id_   = con[u"id"]
-    count = con[u"count"]
-    cmd_tmpl = u"call add(l:contexts,{'name':'%s','id':'%s','count':'%s'})"
-    cmd = (cmd_tmpl % (name,id_,count)).encode("utf-8")
+    com.update({"vim_val":"l:contexts"})
+    cmd = (cmd_tmpl_context % con).encode("utf-8")
     vim.command(cmd)
 EOF
     return l:contexts
