@@ -1,6 +1,5 @@
 " File:    nozbe.vim
 " Author:  Toshiki Teramura <toshiki.teramura@gmail.com>
-" Version: 0.1.0
 " License: MIT Licence
 
 
