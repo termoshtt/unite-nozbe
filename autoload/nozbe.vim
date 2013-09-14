@@ -80,7 +80,7 @@ import vim
 key = vim.eval("a:api_key")
 contexts = call_api(key,"contexts")
 for con in contexts:
-    com.update({"vim_val":"l:contexts"})
+    con.update({"vim_val":"l:contexts"})
     cmd = (cmd_tmpl_context % con).encode("utf-8")
     vim.command(cmd)
 EOF
@@ -95,6 +95,22 @@ import vim
 key = vim.eval("a:api_key")
 pid = vim.eval("a:project_id")
 actions = call_api(key, "actions", {"what": "project", "id" : pid})
+for act in actions:
+    act.update({"vim_val":"l:actions"})
+    cmd = (cmd_tmpl_actions % act).encode("utf-8")
+    vim.command(cmd)
+EOF
+    return l:actions
+endfunction
+
+
+function! nozbe#get_context_actions(api_key,context_id)
+    let l:actions = []
+python << EOF
+import vim
+key = vim.eval("a:api_key")
+cid = vim.eval("a:context_id")
+actions = call_api(key, "actions", {"what": "context", "id" : cid})
 for act in actions:
     act.update({"vim_val":"l:actions"})
     cmd = (cmd_tmpl_actions % act).encode("utf-8")
