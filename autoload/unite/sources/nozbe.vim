@@ -23,7 +23,7 @@ endfunction
 let s:nozbe_next_action_src = {'name': 'nozbe/next_actions'}
 function! s:nozbe_next_action_src.gather_candidates(args,context)
     return map(call(function("nozbe#next_actions"),[g:unite_nozbe_api_key,]),'{
-        \ "word": v:val["name"],
+        \ "word": nozbe#display_action(v:val),
         \ "source": s:nozbe_next_action_src.name,
         \ "kind": "word",
         \ }')
@@ -63,7 +63,7 @@ let s:nozbe_project_actions_src = {"name": "nozbe/project_actions"}
 function! s:nozbe_project_actions_src.gather_candidates(args,context)
     let l:actions = call(function("nozbe#get_project_actions"),[g:unite_nozbe_api_key,a:args[0]])
     return map(l:actions,'{
-        \ "word": v:val["name"],
+        \ "word": nozbe#display_action(v:val),
         \ "source": s:nozbe_next_action_src.name,
         \ "kind": "word",
         \ }')
@@ -75,7 +75,7 @@ let s:nozbe_context_actions_src = {"name": "nozbe/context_actions"}
 function! s:nozbe_context_actions_src.gather_candidates(args,context)
     let l:actions = call(function("nozbe#get_context_actions"),[g:unite_nozbe_api_key,a:args[0]])
     return map(l:actions,'{
-        \ "word": v:val["name"],
+        \ "word": nozbe#display_action(v:val),
         \ "source": s:nozbe_next_action_src.name,
         \ "kind": "word",
         \ }')
