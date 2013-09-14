@@ -121,6 +121,15 @@ EOF
 endfunction
 
 
+function! nozbe#check(api_key,action_id)
+python << EOF
+key = vim.eval("a:api_key")
+aid = vim.eval("a:action_id")
+call_api(key,"check",{"id":aid})
+EOF
+endfunction
+
+
 function! nozbe#display_action(act)
     let l:template = "[%s] %-30S\t[%s] [%s] [%s] [%s]"
     return printf(l:template,a:act["done"], a:act["name"], a:act["project_name"], a:act["time"], a:act["context_name"], a:act["next"])
