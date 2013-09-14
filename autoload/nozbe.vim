@@ -24,6 +24,7 @@ cmd_tmpl_actions = u"""\
     call add(%(vim_val)s,\
     {'name':'%(name)s',\
      'done':'%(done)s',\
+     'next':'%(next)s',\
      'time':'%(time)s',\
      'id':'%(id)s',\
      'project_name':'%(project_name)s',\
@@ -117,4 +118,10 @@ for act in actions:
     vim.command(cmd)
 EOF
     return l:actions
+endfunction
+
+
+function! nozbe#display_action(act)
+    let l:template = "[%s] %-30S\t[%s] [%s] [%s] [%s]"
+    return printf(l:template,a:act["done"], a:act["name"], a:act["project_name"], a:act["time"], a:act["context_name"], a:act["next"])
 endfunction
