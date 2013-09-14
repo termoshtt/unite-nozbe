@@ -19,6 +19,18 @@ def call_api(api_key, method, attr={}):
         return json.load(res)
     except:
         return []
+
+cmd_tmpl_actions = u"""\
+    call add(%(vim_val)s,\
+    {'name':'%(name)s',\
+     'done':'%(done)s',\
+     'time':'%(time)s',\
+     'id':'%(id)s',\
+     'project_name':'%(project_name)s',\
+     'project_id':'%(project_id)s',\
+     'context_name':'%(context_name)s',\
+     'context_id':'%(context_id)s',\
+    })"""
 EOF
 
 
@@ -29,13 +41,8 @@ import vim
 key = vim.eval("a:api_key")
 actions = call_api(key, "actions", {"what": "next"})
 for act in actions:
-    cmd_tmpl = u"""\
-    call add(l:actions,\
-    {'name':'%(name)s',\
-     'id':'%(id)s',\
-     'project_name':'%(project_name)s',\
-    })"""
-    cmd = (cmd_tmpl % act).encode("utf-8")
+    act.update({"vim_val":"l:actions"})
+    cmd = (cmd_tmpl_actions % act).encode("utf-8")
     vim.command(cmd)
 EOF
     return l:actions
@@ -75,4 +82,20 @@ for con in contexts:
     vim.command(cmd)
 EOF
     return l:contexts
+endfunction
+
+
+function! nozbe#get_project_actions(api_key,project_id)
+    let l:actions = []
+python << EOF
+import vim
+key = vim.eval("a:api_key")
+pid = vim.eval("a:project_id")
+actions = call_api(key, "actions", {"what": "project", "id" : pid})
+for act in actions:
+    act.update({"vim_val":"l:actions"})
+    cmd = (cmd_tmpl_actions % act).encode("utf-8")
+    vim.command(cmd)
+EOF
+    return l:actions
 endfunction
