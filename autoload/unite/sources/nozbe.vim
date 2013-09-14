@@ -47,11 +47,13 @@ endfunction
 " Context
 let s:nozbe_context_src = {'name': 'nozbe/contexts'}
 function! s:nozbe_context_src.gather_candidates(args,context)
-    let l:contexts = call(function("nozbe#get_contexts"),[g:unite_nozbe_api_key])
+    let l:contexts = call(function("nozbe#get_contexts"), [g:unite_nozbe_api_key,])
     return map(l:contexts,'{
         \ "word": v:val["name"],
         \ "source": s:nozbe_context_src.name,
-        \ "kind": "word",
+        \ "kind": "source",
+        \ "action__source_name": "nozbe/context_actions",
+        \ "action__source_args": [v:val["id"]],
         \ }')
 endfunction
 
@@ -68,10 +70,23 @@ function! s:nozbe_project_actions_src.gather_candidates(args,context)
 endfunction
 
 
+" Context actions
+let s:nozbe_context_actions_src = {"name": "nozbe/context_actions"}
+function! s:nozbe_context_actions_src.gather_candidates(args,context)
+    let l:actions = call(function("nozbe#get_context_actions"),[g:unite_nozbe_api_key,a:args[0]])
+    return map(l:actions,'{
+        \ "word": v:val["name"],
+        \ "source": s:nozbe_next_action_src.name,
+        \ "kind": "word",
+        \ }')
+endfunction
+
+
 function! unite#sources#nozbe#define()
     call unite#define_source(s:nozbe_next_action_src)
     call unite#define_source(s:nozbe_project_src)
     call unite#define_source(s:nozbe_context_src)
     call unite#define_source(s:nozbe_project_actions_src)
+    call unite#define_source(s:nozbe_context_actions_src)
     return s:nozbe_src
 endfunction
