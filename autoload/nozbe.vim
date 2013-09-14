@@ -83,3 +83,19 @@ for con in contexts:
 EOF
     return l:contexts
 endfunction
+
+
+function! nozbe#get_project_actions(api_key,project_id)
+    let l:actions = []
+python << EOF
+import vim
+key = vim.eval("a:api_key")
+pid = vim.eval("a:project_id")
+actions = call_api(key, "actions", {"what": "project", "id" : pid})
+for act in actions:
+    act.update({"vim_val":"l:actions"})
+    cmd = (cmd_tmpl_actions % act).encode("utf-8")
+    vim.command(cmd)
+EOF
+    return l:actions
+endfunction
