@@ -43,11 +43,12 @@ endfunction
 " Context
 let s:nozbe_context_src = {'name': 'nozbe/context'}
 function! s:nozbe_context_src.gather_candidates(args,context)
-    return [{
-        \ 'word': 'src1',
-        \ 'source': 'nozbe/next_action',
-        \ 'kind': 'word'
-        \ }]
+    let l:contexts = call(function("nozbe#get_contexts"),[g:unite_nozbe_api_key])
+    return map(l:contexts,'{
+        \ "word": v:val["name"],
+        \ "source": s:nozbe_context_src.name,
+        \ "kind": "word",
+        \ }')
 endfunction
 
 
