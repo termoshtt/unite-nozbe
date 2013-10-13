@@ -125,7 +125,7 @@ function! nozbe#check(api_key,action_id)
 python << EOF
 key = vim.eval("a:api_key")
 aid = vim.eval("a:action_id")
-call_api(key,"check",{"id":aid})
+call_api(key,"check",{"ids":aid})
 EOF
 endfunction
 

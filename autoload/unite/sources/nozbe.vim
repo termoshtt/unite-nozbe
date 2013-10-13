@@ -2,15 +2,6 @@
 " Author:  Toshiki Teramura <toshiki.teramura@gmail.com>
 " License: MIT Licence
 
-let s:action_table_for_actions = {
-    \ "check" : {
-    \       "description" : "check"
-    \       }
-    \ }
-function! s:action_table_for_actions.check.func(candidate)
-    echo a:candidate.word
-endfunction
-
 " Main source
 let s:nozbe_src = {'name': 'nozbe'}
 function! s:nozbe_src.gather_candidates(args,context)
@@ -28,12 +19,15 @@ endfunction
 
 
 " Next Action
-let s:nozbe_next_action_src = {'name': 'nozbe/next_actions'}
+let s:nozbe_next_action_src = {
+    \ 'name': 'nozbe/next_actions',
+    \ }
 function! s:nozbe_next_action_src.gather_candidates(args,context)
     return map(call(function("nozbe#next_actions"),[g:unite_nozbe_api_key,]),'{
         \ "word": nozbe#display_action(v:val),
         \ "source": s:nozbe_next_action_src.name,
-        \ "action_table" : s:action_table_for_actions,
+        \ "kind": "nozbe_action",
+        \ "action__action": v:val,
         \ }')
 endfunction
 
@@ -73,7 +67,8 @@ function! s:nozbe_project_actions_src.gather_candidates(args,context)
     return map(l:actions,'{
         \ "word": nozbe#display_action(v:val),
         \ "source": s:nozbe_next_action_src.name,
-        \ "kind": "word",
+        \ "kind": "nozbe_action",
+        \ "action__action": v:val,
         \ }')
 endfunction
 
@@ -85,7 +80,8 @@ function! s:nozbe_context_actions_src.gather_candidates(args,context)
     return map(l:actions,'{
         \ "word": nozbe#display_action(v:val),
         \ "source": s:nozbe_next_action_src.name,
-        \ "kind": "word",
+        \ "kind": "nozbe_action",
+        \ "action__action": v:val,
         \ }')
 endfunction
 
