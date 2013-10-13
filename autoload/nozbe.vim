@@ -137,11 +137,12 @@ EOF
 endfunction
 
 
-function! nozbe#quick_add(api_key, action_name)
+function! nozbe#quick_add()
+    let l:name = input('What is your TODO? : ')
 python << EOF
 import vim
-key = vim.eval("a:api_key")
-name = vim.eval("a:action_name")
+key = vim.eval("g:unite_nozbe_api_key")
+name = vim.eval("l:name")
 call_api(key,"newaction",{"name":name})
 EOF
 endfunction
