@@ -36,3 +36,9 @@ function! nozbe#context_actions(api_key, context_id)
     return nozbe#call_api(a:api_key, "actions", {"what": "context", "id": a:context_id})
 endfunction
 
+
+function! nozbe#display_action(act)
+    let template = "[%s] %-30S\t[%s] [%s] [%s] [%s]"
+    return printf(template,a:act["done"], a:act["name"], a:act["project_name"], a:act["time"], a:act["context_name"], a:act["next"])
+endfunction
+
