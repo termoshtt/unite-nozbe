@@ -1,148 +1,36 @@
-" File:    nozbe.vim
-" Author:  Toshiki Teramura <toshiki.teramura@gmail.com>
-" License: MIT Licence
+
+let s:api_base_url = "https://webapp.nozbe.com/api/"
 
 
-python << EOF
-import urllib2
-import json
+function! nozbe#call_api(api_key, method, attr)
+    let l:api_url = s:api_base_url . a:method . "/key-" . a:api_key
+    let l:result = webapi#http#get(l:api_url, a:attr)
+    return l:result["content"]
+endfunction
 
 
-def call_api(api_key, method, attr={}):
-    base_url = "https://webapp.nozbe.com/api/"
-    url = base_url + method
-    url += "/key-" + api_key
-    for key, val in attr.items():
-        url += "/%s-%s" % (key, val)
-    res = urllib2.urlopen(url)
-    try:
-        return json.load(res)
-    except:
-        return []
+function! nozbe#projects(api_key)
+    return nozbe#call_api(a:api_key, "projects", {})
+endfunction
 
-cmd_tmpl_actions = u"""\
-    call add(%(vim_val)s,\
-    {'name':'%(name)s',\
-     'done':'%(done)s',\
-     'next':'%(next)s',\
-     'time':'%(time)s',\
-     'id':'%(id)s',\
-     'project_name':'%(project_name)s',\
-     'project_id':'%(project_id)s',\
-     'context_name':'%(context_name)s',\
-     'context_id':'%(context_id)s',\
-    })"""
 
-cmd_tmpl_project = u"""\
-    call add(%(vim_val)s,\
-    {'name':'%(name)s',\
-     'id':'%(id)s',\
-     'count':'%(count)s',\
-    })"""
-
-cmd_tmpl_context = cmd_tmpl_project
-EOF
+function! nozbe#contexts(api_key)
+    return nozbe#call_api(a:api_key, "contexts", {})
+endfunction
 
 
 function! nozbe#next_actions(api_key)
-    let l:actions = []
-python << EOF
-import vim
-key = vim.eval("a:api_key")
-actions = call_api(key, "actions", {"what": "next"})
-for act in actions:
-    act.update({"vim_val":"l:actions"})
-    cmd = (cmd_tmpl_actions % act).encode("utf-8")
-    vim.command(cmd)
-EOF
-    return l:actions
+    return nozbe#call_api(a:api_key, "actions", {"what": "next"})
 endfunction
 
 
-function! nozbe#get_projects(api_key)
-    let l:projects = []
-python << EOF
-import vim
-key = vim.eval("a:api_key")
-projects = call_api(key,"projects")
-for pro in projects:
-    pro.update({"vim_val":"l:projects"})
-    cmd = (cmd_tmpl_project % pro).encode("utf-8")
-    vim.command(cmd)
-EOF
-    return l:projects
+function! nozbe#project_actions(api_key, project_id)
+    return nozbe#call_api(a:api_key, "actions", {"what": "project", "id": a:project_id})
 endfunction
 
 
-function! nozbe#get_contexts(api_key)
-    let l:contexts = []
-python << EOF
-import vim
-key = vim.eval("a:api_key")
-contexts = call_api(key,"contexts")
-for con in contexts:
-    con.update({"vim_val":"l:contexts"})
-    cmd = (cmd_tmpl_context % con).encode("utf-8")
-    vim.command(cmd)
-EOF
-    return l:contexts
+function! nozbe#context_actions(api_key, context_id)
+    return nozbe#call_api(a:api_key, "actions", {"what": "context", "id": a:context_id})
 endfunction
 
 
-function! nozbe#get_project_actions(api_key,project_id)
-    let l:actions = []
-python << EOF
-import vim
-key = vim.eval("a:api_key")
-pid = vim.eval("a:project_id")
-actions = call_api(key, "actions", {"what": "project", "id" : pid})
-for act in actions:
-    act.update({"vim_val":"l:actions"})
-    cmd = (cmd_tmpl_actions % act).encode("utf-8")
-    vim.command(cmd)
-EOF
-    return l:actions
-endfunction
-
-
-function! nozbe#get_context_actions(api_key,context_id)
-    let l:actions = []
-python << EOF
-import vim
-key = vim.eval("a:api_key")
-cid = vim.eval("a:context_id")
-actions = call_api(key, "actions", {"what": "context", "id" : cid})
-for act in actions:
-    act.update({"vim_val":"l:actions"})
-    cmd = (cmd_tmpl_actions % act).encode("utf-8")
-    vim.command(cmd)
-EOF
-    return l:actions
-endfunction
-
-
-function! nozbe#display_action(act)
-    let l:template = "[%s] %-30S\t[%s] [%s] [%s] [%s]"
-    return printf(l:template,a:act["done"], a:act["name"], a:act["project_name"], a:act["time"], a:act["context_name"], a:act["next"])
-endfunction
-
-
-function! nozbe#check(api_key,action_id)
-python << EOF
-import vim
-key = vim.eval("a:api_key")
-aid = vim.eval("a:action_id")
-call_api(key,"check",{"ids":aid})
-EOF
-endfunction
-
-
-function! nozbe#quick_add()
-    let l:name = input('What is your TODO? : ')
-python << EOF
-import vim
-key = vim.eval("g:unite_nozbe_api_key")
-name = vim.eval("l:name")
-call_api(key,"newaction",{"name":name})
-EOF
-endfunction
