@@ -24,8 +24,31 @@ function! nozbe#sync2#login()
     \ }
     let res = nozbe#sync2#call_api("login", attr)
     if !has_key(res, "key")
-        echoerr "Login Failed"
-        echo res["error"]
+        echoerr "login Failed" . join(res["error"], ', ')
+    else
+        let g:nozbe_api_key = res["key"]
+    endif
+endfunction
+
+
+" Sign up to Nozbe.com first
+function! nozbe#sync2#signup()
+    let name = input('Enter your Name: ')
+    let email = input('Enter your E-mail: ')
+    let passwd = inputsecret('Enter Password: ')
+    let passwd_dual = inputsecret('Enter Password (for confirmation): ')
+    if passwd !=# passwd_dual
+        echoerr "Password does not match"
+        return
+    endif
+    let attr = {
+    \   "name": name,
+    \   "email": email,
+    \   "password": passwd
+    \ }
+    let res = nozbe#sync2#call_api("signup", attr)
+    if !has_key(res, "key")
+        echoerr "sign up Failed" . join(res["error"], ', ')
     else
         let g:nozbe_api_key = res["key"]
     endif
