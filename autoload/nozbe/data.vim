@@ -1,11 +1,10 @@
 
 let s:api_base_url = "http://dev.webapp.nozbe.com/sync2/"
 
+let s:app_key_termoshtt = "MF5dMyqHem"
 
-function! nozbe#sync2#call_api(method, attr)
-    let api_url = s:api_base_url . a:method
-    let a:attr['app_key'] = "MF5dMyqHem" " key for termoshtt
-    let a:attr['key'] = g:nozbe_api_key
+function! nozbe#data#call_api(method, key, attr)
+    let api_url = s:api_base_url . a:method . "/app_key-" . s:app_key_termoshtt . "/key-" . a:key
     let header = {"Content-Type": "application/json"}
     let param_json = webapi#json#encode(a:attr)
     let response = webapi#http#post(api_url, param_json, header)
@@ -14,7 +13,7 @@ function! nozbe#sync2#call_api(method, attr)
 endfunction
 
 " Get api_key interactively to save to g:nozbe_api_key
-function! nozbe#sync2#login()
+function! nozbe#data#login()
     let email = input('Enter email for Nozbe.com: ')
     let passwd = inputsecret(printf('Enter Password for Nozbe.com (%s): ', email))
     let md5_passwd = md5#md5(passwd)
@@ -22,7 +21,7 @@ function! nozbe#sync2#login()
     \   "email": email,
     \   "password": md5_passwd,
     \ }
-    let res = nozbe#sync2#call_api("login", attr)
+    let res = nozbe#data#call_api("login", "", attr)
     if !has_key(res, "key")
         echoerr "login Failed" . join(res["error"], ', ')
     else
@@ -30,9 +29,8 @@ function! nozbe#sync2#login()
     endif
 endfunction
 
-
 " Sign up to Nozbe.com first
-function! nozbe#sync2#signup()
+function! nozbe#data#signup()
     let name = input('Enter your Name: ')
     let email = input('Enter your E-mail: ')
     let passwd = inputsecret('Enter Password: ')
@@ -46,11 +44,19 @@ function! nozbe#sync2#signup()
     \   "email": email,
     \   "password": passwd
     \ }
-    let res = nozbe#sync2#call_api("signup", attr)
+    let res = nozbe#data#call_api("signup", "", attr)
     if !has_key(res, "key")
         echoerr "sign up Failed" . join(res["error"], ', ')
     else
         let g:nozbe_api_key = res["key"]
     endif
+endfunction
+
+" Getting data
+function! nozbe#data#get()
+    if !exists("g:nozbe_api_key")
+        call nozbe#data#login()
+    endif
+    let g:nozbe_data = nozbe#data#call_api("getdata", g:nozbe_api_key, { "what": "all" })
 endfunction
 
