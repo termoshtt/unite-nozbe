@@ -85,3 +85,32 @@ function! nozbe#data#timestamp()
     return nozbe#data#call_api("getserver_ts", g:nozbe_api_key, {})['ts']
 endfunction
 
+function! nozbe#data#get_project(hash)
+    for project in g:nozbe_data["project"]
+        if a:hash ==# project["hash"]
+            return project
+        endif
+    endfor
+    echoerr "Project does not found"
+    return {}
+endfunction
+
+function! nozbe#data#get_context(hash)
+    for context in g:nozbe_data["context"]
+        if a:hash ==# context["hash"]
+            return context
+        endif
+    endfor
+    echoerr "Context does not found"
+    return {}
+endfunction
+
+function! nozbe#data#get_user(hash)
+    let user = g:nozbe_data["userinfo"]
+    if a:hash ==# user["hash"]
+        return user["name"]
+    endif
+    echoerr "Hash for user does not matches"
+    return ""
+endfunction
+
