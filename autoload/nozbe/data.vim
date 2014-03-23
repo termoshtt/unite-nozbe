@@ -60,3 +60,27 @@ function! nozbe#data#get()
     let g:nozbe_data = nozbe#data#call_api("getdata", g:nozbe_api_key, { "what": "all" })
 endfunction
 
+" Sync data
+function! nozbe#data#process()
+    if !exists("g:nozbe_api_key")
+        call nozbe#data#login()
+    endif
+    if !exists("g:nozbe_data")
+        echoerr "Please get nozbe data first."
+        return
+    endif
+    let res = nozbe#data#call_api("process", g:nozbe_api_key, g:nozbe_data)
+    if has_key(res, "error")
+        echoerr "Error occurs while process: " . res["error"]
+    else
+        let g:nozbe_data = res
+    endif
+endfunction
+
+function! nozbe#data#timestamp()
+    if !exists("g:nozbe_api_key")
+        call nozbe#data#login()
+    endif
+    return nozbe#data#call_api("getserver_ts", g:nozbe_api_key, {})['ts']
+endfunction
+
