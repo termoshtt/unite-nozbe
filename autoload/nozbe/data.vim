@@ -8,8 +8,9 @@ function! nozbe#data#call_api(method, key, attr)
     let header = {"Content-Type": "application/json"}
     let param_json = webapi#json#encode(a:attr)
     let response = webapi#http#post(api_url, param_json, header)
-    let g:nozbe_debug_response = webapi#json#decode(response['content'])
-    return g:nozbe_debug_response
+    let g:nozbe_debug_response = response " DEBUG
+    let data = webapi#json#decode(response['content'])
+    return data
 endfunction
 
 " Get api_key interactively to save to g:nozbe_api_key
@@ -23,7 +24,7 @@ function! nozbe#data#login()
     \ }
     let res = nozbe#data#call_api("login", "", attr)
     if !has_key(res, "key")
-        echoerr "login Failed" . join(res["error"], ', ')
+        echoerr "login failed: " . join(res["error"], ', ')
     else
         let g:nozbe_api_key = res["key"]
     endif
@@ -46,7 +47,7 @@ function! nozbe#data#signup()
     \ }
     let res = nozbe#data#call_api("signup", "", attr)
     if !has_key(res, "key")
-        echoerr "sign up Failed" . join(res["error"], ', ')
+        echoerr "sign up failed: " . join(res["error"], ', ')
     else
         let g:nozbe_api_key = res["key"]
     endif
